@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
+import { ClerkProvider } from '@clerk/nextjs';
+import ConvexClientProvider from "@/components/convex-client-provider";
 
 const robotoSlab = Roboto_Slab({subsets:['latin'],variable:'--font-serif'});
 
@@ -28,7 +30,11 @@ export default function RootLayout({
       className={cn("antialiased", fontSans.variable, fontMono.variable, "font-serif", robotoSlab.variable)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ClerkProvider>
+          <ConvexClientProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </ConvexClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   )
