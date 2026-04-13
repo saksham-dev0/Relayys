@@ -1,209 +1,605 @@
 "use client"
+import type { ReactNode } from "react"
+import { useAuth } from "@clerk/nextjs"
+import { Inter, JetBrains_Mono, Oswald } from "next/font/google"
+import EvilEye from "@/components/EvilEye"
 import type { LucideIcon } from "lucide-react"
 import {
-  ArrowLeft,
   ArrowRight,
-  Bolt,
-  Building2,
-  Camera,
-  CirclePlay,
-  Flower2,
-  Heart,
-  Infinity,
-  Leaf,
-  Mail,
-  MapPin,
-  Music4,
-  Send,
-  Settings,
-  Sparkles,
-  Star,
-  SunMedium,
-  TrainFront,
+  Briefcase,
+  CheckCircle2,
+  ChevronRight,
+  ClipboardList,
+  Lock,
+  PhoneCall,
+  PieChart,
+  Plus,
+  SlidersHorizontal,
+  TrendingUp,
+  UserPlus,
+  Users,
+  Wallet,
+  Workflow,
+  Zap,
 } from "lucide-react"
 
-type NavLink = {
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-hubfit-sans",
+})
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-hubfit-mono",
+})
+
+const oswald = Oswald({
+  subsets: ["latin"],
+  variable: "--font-hubfit-display",
+})
+
+type SimpleLink = {
   label: string
   href: string
-  accent: string
 }
 
-type ArchiveCard = {
-  title?: string
-  image: string
-  rotation: string
-  width: string
-  height: string
-  tone: string
-  kind: "video" | "photo"
-  topOffset?: string
-}
-
-type Pillar = {
-  label: string
-  color: string
-}
-
-type LocationFeature = {
-  label: string
-  color: string
-  icon: LucideIcon
-}
-
-type ScheduleItem = {
-  day: string
+type FeatureCard = {
   title: string
   description: string
-  accent: string
+  visual: "members" | "messaging" | "tracking" | "ai"
+  span: string
 }
 
-const navLinks: NavLink[] = [
-  { label: "Theme", href: "#about", accent: "hover:bg-[#C9E265]" },
-  { label: "Memories", href: "#memories", accent: "hover:bg-[#9D8BB5]" },
-  { label: "Schedule", href: "#schedule", accent: "hover:bg-[#FF6B4A]" },
+type IconCard = {
+  title: string
+  description: string
+  icon: LucideIcon
+  iconClassName: string
+}
+
+type LibraryCard = {
+  eyebrow: string
+  title: string
+  description: string
+  span: string
+  content: ReactNode
+}
+
+const navLinks: SimpleLink[] = [
+  { label: "Platform", href: "#features" },
+  { label: "Presale", href: "#pricing" },
+  { label: "Client App", href: "#content" },
+  { label: "Coach App", href: "#management" },
 ]
 
-const pillars: Pillar[] = [
-  { label: "Growth", color: "bg-[#3D6B4F]" },
-  { label: "Connection", color: "bg-[#FF6B4A]" },
-  { label: "Balance", color: "bg-[#9D8BB5]" },
-]
-
-const archiveCards: ArchiveCard[] = [
+const featureCards: FeatureCard[] = [
   {
-    title: "2024 Highlight Reel",
-    image:
-      "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg",
-    rotation: "rotate-2",
-    width: "w-[300px] md:w-[400px]",
-    height: "h-[300px]",
-    tone: "bg-black",
-    kind: "video",
+    title: "Members",
+    description:
+      "Manage your clients efficiently with comprehensive profiles and group tracking tools.",
+    visual: "members",
+    span: "md:col-span-1",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop",
-    rotation: "-rotate-3",
-    width: "w-[280px]",
-    height: "h-[340px]",
-    tone: "bg-gray-200",
-    kind: "photo",
-    topOffset: "mt-8",
+    title: "Seamless Messaging",
+    description:
+      "Chat seamlessly with clients and keep conversations organized in one central inbox.",
+    visual: "messaging",
+    span: "md:col-span-2",
   },
   {
-    title: "Garba Night '22",
-    image:
-      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop",
-    rotation: "rotate-1",
-    width: "w-[320px]",
-    height: "h-[300px]",
-    tone: "bg-gray-200",
-    kind: "photo",
+    title: "Real-Time Tracking",
+    description:
+      "Monitor progress, daily habits, and task completion in real time for stronger accountability.",
+    visual: "tracking",
+    span: "md:col-span-2",
   },
   {
-    title: "Keynote Speech",
-    image:
-      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop",
-    rotation: "-rotate-2",
-    width: "w-[300px] md:w-[400px]",
-    height: "h-[300px]",
-    tone: "bg-black",
-    kind: "video",
-    topOffset: "mt-6",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1526045612212-70caf35c14df?q=80&w=800&auto=format&fit=crop",
-    rotation: "rotate-3",
-    width: "w-[280px]",
-    height: "h-[340px]",
-    tone: "bg-gray-200",
-    kind: "photo",
+    title: "Benchy AI",
+    description:
+      "Your personal AI assistant that helps program and manage your business effortlessly.",
+    visual: "ai",
+    span: "md:col-span-1",
   },
 ]
 
-const locationFeatures: LocationFeature[] = [
-  { label: "Easy Transit Access", color: "text-[#FF6B4A]", icon: TrainFront },
-  { label: "Botanical Gardens", color: "text-[#3D6B4F]", icon: Leaf },
-  { label: "NYC Skyline Views", color: "text-[#9D8BB5]", icon: Building2 },
-]
-
-const schedule: ScheduleItem[] = [
+const managementCards: IconCard[] = [
   {
-    day: "Thursday",
-    title: "Arrival and Opening Night",
-    description: "Check-in, first connections, and a vibrant opening celebration.",
-    accent: "bg-[#C9E265]",
+    title: "Teams",
+    description:
+      "Group clients together for challenges, programs, and community events with ease.",
+    icon: Users,
+    iconClassName: "text-blue-400",
   },
   {
-    day: "Friday",
-    title: "Talks, Labs, and Reflection",
-    description: "Mainstage speakers, small-group sessions, and space to reset.",
-    accent: "bg-[#FF6B4A]",
+    title: "Client Forms",
+    description:
+      "Collect check-ins, feedback, onboarding details, and intake data without friction.",
+    icon: ClipboardList,
+    iconClassName: "text-cyan-400",
   },
   {
-    day: "Saturday",
-    title: "Culture, Community, and Socials",
-    description: "Shared meals, creative programming, and the big night together.",
-    accent: "bg-[#9D8BB5]",
-  },
-  {
-    day: "Sunday",
-    title: "Closing Circle",
-    description: "Final takeaways, farewells, and momentum for what comes next.",
-    accent: "bg-[#3D6B4F]",
+    title: "Finance",
+    description:
+      "Track invoices, payments, and revenue directly inside the same operating system.",
+    icon: Wallet,
+    iconClassName: "text-sky-400",
   },
 ]
 
-const marqueeItems = [
-  "Art of the In-Between",
-  "July 2-5 2026",
-  "New Jersey",
-  "YJA Convention",
+const automationCards: IconCard[] = [
+  {
+    title: "Auto Flow",
+    description: "Create powerful automated workflows that save time every single week.",
+    icon: Workflow,
+    iconClassName: "text-pink-400",
+  },
+  {
+    title: "Onboarding Flow",
+    description: "Automate the new client welcome experience from payment to first check-in.",
+    icon: UserPlus,
+    iconClassName: "text-fuchsia-400",
+  },
+  {
+    title: "Benchy Calling",
+    description: "AI-powered automated phone calls for leads and active clients.",
+    icon: PhoneCall,
+    iconClassName: "text-rose-400",
+  },
 ]
 
-const footerLinks = ["About YJA", "Convention History", "Sponsorship"]
+const pricingFeatures = [
+  "Unlimited Clients",
+  "Team Accounts & Roles",
+  "Custom Branding",
+  "Automated Workflows",
+]
+
+const footerColumns = [
+  {
+    title: "Product",
+    links: ["Features", "Pricing", "Client App", "Coach App"],
+  },
+  {
+    title: "Company",
+    links: ["About Us", "Blog", "Careers", "Contact"],
+  },
+  {
+    title: "Resources",
+    links: ["Help Center", "Community", "API Docs", "Status"],
+  },
+  {
+    title: "Legal",
+    links: ["Privacy", "Terms", "Security"],
+  },
+]
+
+const faqs = [
+  {
+    question: "What does Lifetime Access mean?",
+    answer:
+      "You pay once and get access to the HubFit business plan forever, including future updates and features released in that tier.",
+  },
+  {
+    question: "Can I migrate my data from other platforms?",
+    answer:
+      "Yes. We can help move over your clients, programs, and key business data so you can switch without rebuilding everything manually.",
+  },
+  {
+    question: "Is the Coach App included?",
+    answer:
+      "Yes. The package includes both the core dashboard and coach-facing mobile workflows so you can run your business anywhere.",
+  },
+  {
+    question: "What happens after the presale ends?",
+    answer:
+      "After presale, HubFit moves to recurring pricing. This lifetime offer is reserved for early supporters only.",
+  },
+  {
+    question: "Is there a refund policy?",
+    answer:
+      "Yes. There is a 30-day money-back guarantee if HubFit is not the right fit for your coaching business.",
+  },
+]
+
+const libraryCards: LibraryCard[] = [
+  {
+    eyebrow: "LIBRARY",
+    title: "Training Systems",
+    description:
+      "Build cohesive workout programs with reusable exercises, unified templates, and comprehensive guides.",
+    span: "sm:col-span-2 lg:col-span-7 lg:row-span-2",
+    content: (
+      <div className="mt-auto space-y-4">
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            ["500+", "Exercises"],
+            ["45", "Plans"],
+            ["12", "Weeks"],
+          ].map(([value, label]) => (
+            <div
+              key={label}
+              className="rounded-xl border border-white/10 bg-white/5 p-3 transition hover:scale-[1.02] hover:bg-white/10"
+            >
+              <div className="text-2xl font-semibold text-white">{value}</div>
+              <div className="text-xs text-white/60">{label}</div>
+            </div>
+          ))}
+        </div>
+        <button className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
+          Open Builder
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    ),
+  },
+  {
+    eyebrow: "CLIENTS",
+    title: "Client Access",
+    description: "Assign programs instantly to individuals or groups.",
+    span: "lg:col-span-5",
+    content: (
+      <div className="mt-4 flex items-center justify-between gap-4">
+        <div>
+          <div className="flex -space-x-2">
+            {["AL", "MK", "JT", "+8"].map((item, index) => (
+              <div
+                key={item}
+                className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-black text-xs font-semibold ${
+                  index === 3 ? "bg-white/10 text-white/70" : "bg-white text-black"
+                }`}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-white/60">Active now</p>
+        </div>
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-transparent">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 text-xl font-semibold text-black">
+            S
+          </div>
+          <span className="absolute bottom-1 right-1 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-black" />
+        </div>
+      </div>
+    ),
+  },
+  {
+    eyebrow: "FORMS",
+    title: "Check-ins & Intake",
+    description: "Collect weekly check-ins and standardize your client workflows.",
+    span: "lg:col-span-5",
+    content: (
+      <div className="mt-4 space-y-3">
+        {([
+          ["Weekly Check-in", true],
+          ["Photos Required", false],
+        ] as const).map(([label, enabled]) => (
+          <div
+            key={label}
+            className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 p-3"
+          >
+            <span className="text-xs text-white/80">{label}</span>
+            <div
+              className={`relative h-5 w-10 rounded-full ${
+                enabled ? "bg-indigo-500" : "bg-white/10"
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition ${
+                  enabled ? "right-0.5" : "left-0.5 bg-white/40"
+                }`}
+              />
+            </div>
+          </div>
+        ))}
+        <div className="rounded-lg border border-white/10 bg-black/20 p-3">
+          <div className="mb-2 flex items-center justify-between text-xs text-white/70">
+            <span>Compliance</span>
+            <span>94%</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-white/10">
+            <div className="h-1.5 w-[94%] rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    eyebrow: "ASSETS",
+    title: "The Vault",
+    description: "Documents, videos, and guides in one place.",
+    span: "lg:col-span-4 lg:row-span-2",
+    content: (
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {["DOC", "VID", "+120"].map((item) => (
+          <div
+            key={item}
+            className="flex aspect-square items-center justify-center rounded-lg border border-white/10 bg-white/5 text-xs text-white/70"
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    eyebrow: "MACROS",
+    title: "Nutrition Logic",
+    description: "Custom meal plans and macro calculations.",
+    span: "lg:col-span-4",
+    content: (
+      <div className="mt-4 rounded-xl border border-white/10 bg-black/80 p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-red-400" />
+          <span className="h-2 w-2 rounded-full bg-yellow-400" />
+          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="ml-auto text-[10px] text-white/50">meal.json</span>
+        </div>
+        <pre className={`${mono.className} overflow-x-auto text-[10px] leading-relaxed text-white/70`}>
+          <code>{`const plan = {
+  target: "Fat Loss",
+  cals: 2400,
+  macros: { p: 180, c: 220 }
+}`}</code>
+        </pre>
+      </div>
+    ),
+  },
+  {
+    eyebrow: "HABITS",
+    title: "Routine Tracking",
+    description: "Daily reminders and visible consistency metrics.",
+    span: "lg:col-span-4",
+    content: (
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="rounded-lg border border-white/10 bg-black/20 p-3">
+          <div className="text-lg font-semibold text-emerald-400">100%</div>
+          <div className="text-[10px] text-white/60">Consistency</div>
+        </div>
+        <div className="rounded-lg border border-white/10 bg-black/20 p-3">
+          <div className="text-lg font-semibold text-sky-400">Daily</div>
+          <div className="text-[10px] text-white/60">Reminders</div>
+        </div>
+      </div>
+    ),
+  },
+]
+
+function SectionLabel({
+  index,
+  title,
+}: {
+  index: string
+  title: string
+}) {
+  return (
+    <div className="flex items-center gap-6">
+      <span className={`${mono.className} text-xs tracking-[0.35em] text-blue-400`}>
+        {index}
+      </span>
+      <div className="h-px flex-1 bg-white/10" />
+      <span className="text-xs uppercase tracking-[0.35em] text-slate-500">{title}</span>
+    </div>
+  )
+}
+
+function FeatureVisual({ visual }: { visual: FeatureCard["visual"] }) {
+  if (visual === "members") {
+    return (
+      <div className="relative mb-6 flex h-48 items-center justify-center overflow-visible">
+        <div className="absolute h-16 w-16 rounded-full border border-blue-400/30 animate-ripple" />
+        <div className="absolute h-16 w-16 rounded-full border border-white/10 bg-[#15151a] shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+          <div className="absolute inset-0 rounded-full bg-blue-500/10 blur-sm" />
+          <div className="relative flex h-full items-center justify-center">
+            <Users className="h-7 w-7 text-white" />
+          </div>
+        </div>
+        <svg viewBox="0 0 200 200" className="h-full w-full text-blue-500/20">
+          <g className="origin-center animate-orbit">
+            <circle
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeDasharray="6 6"
+              className="opacity-30"
+            />
+            <circle cx="100" cy="20" r="3" fill="#60A5FA" />
+            <circle cx="180" cy="100" r="2.5" fill="#3B82F6" className="opacity-70" />
+            <circle cx="20" cy="100" r="2.5" fill="#3B82F6" className="opacity-70" />
+          </g>
+          <circle
+            cx="100"
+            cy="100"
+            r="50"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+            className="opacity-40"
+          />
+        </svg>
+      </div>
+    )
+  }
+
+  if (visual === "messaging") {
+    return (
+      <div className="relative mb-6 flex h-48 items-center justify-center overflow-hidden">
+        <div className="absolute right-0 top-0 h-44 w-44 rounded-full bg-indigo-600/20 blur-[80px]" />
+        <svg viewBox="0 0 400 200" className="absolute inset-0 h-full w-full">
+          <path d="M50 100 L120 100 L150 70" stroke="rgba(255,255,255,0.12)" />
+          <path d="M350 100 L280 100 L250 130" stroke="rgba(255,255,255,0.12)" />
+          <path
+            d="M50 100 L120 100 L150 70"
+            stroke="url(#leftFlow)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray="120"
+            className="animate-flow"
+          />
+          <path
+            d="M350 100 L280 100 L250 130"
+            stroke="url(#rightFlow)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray="120"
+            className="animate-flow-delayed"
+          />
+          <defs>
+            <linearGradient id="leftFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0" />
+              <stop offset="50%" stopColor="#60A5FA" stopOpacity="1" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="rightFlow" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0" />
+              <stop offset="50%" stopColor="#60A5FA" stopOpacity="1" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-[1.5rem] border border-blue-500/30 bg-gradient-to-br from-indigo-900/50 to-blue-900/20 shadow-[0_0_30px_rgba(59,130,246,0.3)] animate-breathe-diamond">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-400/50 bg-blue-500/5">
+            <div className="h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.9)]" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (visual === "tracking") {
+    return (
+      <div className="relative mb-6 flex h-48 items-center justify-center">
+        <div className="absolute h-48 w-48 rounded-full bg-blue-600/20 blur-[60px] animate-soft-pulse" />
+        <div className="flex items-center gap-4">
+          {[0, 1].map((index) => (
+            <div
+              key={`left-${index}`}
+              className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-[#121215] text-gray-500 animate-lock-shimmer"
+              style={{ animationDelay: `${index}s` }}
+            >
+              <Lock className="h-4 w-4" />
+            </div>
+          ))}
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-indigo-600 text-white shadow-[0_0_24px_rgba(79,70,229,0.45)] animate-active-pulse">
+            <Zap className="relative z-10 h-8 w-8" />
+            <span className="absolute -bottom-3 rounded-full border border-white/10 bg-[#08080a] px-2 py-0.5 text-[9px] font-semibold tracking-[0.3em] text-white">
+              LIVE
+            </span>
+          </div>
+          {[2, 3].map((index) => (
+            <div
+              key={`right-${index}`}
+              className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-[#121215] text-gray-500 animate-lock-shimmer"
+              style={{ animationDelay: `${index}s` }}
+            >
+              <Lock className="h-4 w-4" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative z-10 mb-6 flex h-48 items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.07] [transform:scale(1.5)_rotate(15deg)] animate-grid-pan" />
+      <svg viewBox="0 0 200 200" className="h-full w-full text-white/10">
+        <line x1="100" y1="20" x2="100" y2="180" stroke="currentColor" strokeWidth="1" />
+        <line
+          x1="60"
+          y1="20"
+          x2="60"
+          y2="180"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeDasharray="4 4"
+          className="animate-signal-flow"
+        />
+        <line
+          x1="140"
+          y1="20"
+          x2="140"
+          y2="180"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeDasharray="4 4"
+          className="animate-signal-flow-reverse"
+        />
+        <circle cx="100" cy="60" r="3" fill="white" className="animate-node-activate" />
+        <circle cx="100" cy="100" r="3" fill="white" className="animate-node-activate [animation-delay:2s]" />
+        <circle cx="100" cy="150" r="3" fill="white" className="animate-node-activate [animation-delay:4s]" />
+      </svg>
+    </div>
+  )
+}
 
 export default function HomePage() {
+  const { isSignedIn } = useAuth()
+
   return (
-    <main className="selection:bg-[#C9E265] selection:text-[#1A261D]">
+    <main
+      className={`${inter.variable} ${mono.variable} ${oswald.variable} relative isolate overflow-x-hidden bg-black text-slate-100 selection:bg-blue-400/20 selection:text-white`}
+    >
       <style jsx global>{`
-        :root {
-          --bg-cream: #f2efe9;
-          --text-dark: #1a261d;
-          --accent-green: #3d6b4f;
-          --accent-lime: #c9e265;
-          --accent-orange: #ff6b4a;
-          --accent-purple: #9d8bb5;
-        }
-
         body {
-          background: var(--bg-cream);
-          color: var(--text-dark);
-          overflow-x: hidden;
+          background: #000;
+          color: #f8fafc;
+          font-family: var(--font-hubfit-sans), sans-serif;
         }
 
-        @keyframes yja-float {
+        html {
+          scroll-behavior: smooth;
+        }
+
+        @keyframes fadeSlideIn {
+          0% {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(8px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+          }
+        }
+
+        @keyframes floatCursor {
           0%,
           100% {
-            transform: translateY(0) rotate(0deg);
+            transform: translate(0, 0);
           }
           50% {
-            transform: translateY(-20px) rotate(2deg);
+            transform: translate(4px, -6px);
           }
         }
 
-        @keyframes yja-float-reverse {
+        @keyframes floatChip {
           0%,
           100% {
-            transform: translateY(0) rotate(0deg);
+            transform: translate(0, 0);
           }
           50% {
-            transform: translateY(15px) rotate(-2deg);
+            transform: translate(-8px, -12px);
           }
         }
 
-        @keyframes yja-spin-slow {
+        @keyframes rippleExpand {
+          0% {
+            transform: scale(0.8);
+            opacity: 0.6;
+          }
+          100% {
+            transform: scale(2.5);
+            opacity: 0;
+          }
+        }
+
+        @keyframes orbitSlow {
           from {
             transform: rotate(0deg);
           }
@@ -212,280 +608,431 @@ export default function HomePage() {
           }
         }
 
-        @keyframes yja-marquee {
+        @keyframes flowData {
           0% {
-            transform: translateX(0);
+            stroke-dashoffset: 120;
+            opacity: 0;
+          }
+          15% {
+            opacity: 1;
+          }
+          85% {
+            opacity: 1;
           }
           100% {
-            transform: translateX(-50%);
+            stroke-dashoffset: 0;
+            opacity: 0;
           }
         }
 
-        .yja-noise {
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 10;
-          opacity: 0.06;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        @keyframes breatheDiamond {
+          0%,
+          100% {
+            transform: scale(1);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.5);
+          }
         }
 
-        .yja-float {
-          animation: yja-float 6s ease-in-out infinite;
+        @keyframes lockShimmer {
+          0%,
+          100% {
+            opacity: 0.45;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scale(1.05);
+          }
         }
 
-        .yja-float-delayed {
-          animation: yja-float-reverse 7s ease-in-out infinite;
-          animation-delay: 1s;
+        @keyframes activePulse {
+          0%,
+          100% {
+            transform: scale(1);
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+          }
+          50% {
+            transform: scale(1.02);
+            box-shadow: 0 0 35px rgba(79, 70, 229, 0.65);
+          }
         }
 
-        .yja-spin-slow {
-          animation: yja-spin-slow 12s linear infinite;
+        @keyframes softPulse {
+          0%,
+          100% {
+            opacity: 0.15;
+            transform: scale(0.9);
+          }
+          50% {
+            opacity: 0.3;
+            transform: scale(1.08);
+          }
         }
 
-        .yja-marquee {
-          animation: yja-marquee 30s linear infinite;
+        @keyframes gridPan {
+          0% {
+            background-position: 0 0;
+          }
+          100% {
+            background-position: 100px 100px;
+          }
         }
 
-        .yja-text-stroke {
-          -webkit-text-stroke: 1px #1a261d;
-          color: transparent;
+        @keyframes signalFlow {
+          0% {
+            stroke-dashoffset: 20;
+            opacity: 0.3;
+          }
+          100% {
+            stroke-dashoffset: 0;
+            opacity: 0.6;
+          }
         }
 
-        .yja-hard-shadow {
-          box-shadow: 6px 6px 0 0 #1a261d;
-          border: 2px solid #1a261d;
+        @keyframes nodeActivate {
+          0%,
+          90%,
+          100% {
+            fill: white;
+            r: 3px;
+          }
+          92% {
+            fill: #3b82f6;
+            r: 4.5px;
+          }
+          95% {
+            fill: #60a5fa;
+            r: 4px;
+          }
         }
 
-        .yja-hard-shadow-sm {
-          box-shadow: 4px 4px 0 0 #1a261d;
-          border: 2px solid #1a261d;
+        @keyframes rayShift {
+          0% {
+            transform: translateX(0) translateY(0);
+          }
+          50% {
+            transform: translateX(-20px) translateY(20px);
+          }
+          100% {
+            transform: translateX(0) translateY(0);
+          }
         }
 
-        .yja-hard-shadow-hover {
-          transition:
-            transform 200ms ease,
-            box-shadow 200ms ease,
-            background-color 200ms ease;
+        .animate-enter {
+          animation: fadeSlideIn 0.8s ease-out both;
         }
 
-        .yja-hard-shadow-hover:hover {
-          box-shadow: 2px 2px 0 0 #1a261d;
-          transform: translate(4px, 4px);
+        .animate-enter-delay {
+          animation: fadeSlideIn 0.8s ease-out 0.2s both;
         }
 
-        .yja-scrollbar-none {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        .animate-float-cursor {
+          animation: floatCursor 6s ease-in-out infinite;
         }
 
-        .yja-scrollbar-none::-webkit-scrollbar {
-          display: none;
+        .animate-float-chip {
+          animation: floatChip 8s ease-in-out infinite;
         }
 
-        ::-webkit-scrollbar {
-          width: 10px;
+        .animate-ripple {
+          animation: rippleExpand 4s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
 
-        ::-webkit-scrollbar-track {
-          background: #f2efe9;
-          border-left: 2px solid #1a261d;
+        .animate-orbit {
+          animation: orbitSlow 12s linear infinite;
         }
 
-        ::-webkit-scrollbar-thumb {
-          background: #ff6b4a;
-          border: 2px solid #1a261d;
-          border-radius: 999px;
+        .animate-flow {
+          animation: flowData 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-          background: #3d6b4f;
+        .animate-flow-delayed {
+          animation: flowData 3s cubic-bezier(0.4, 0, 0.2, 1) 1.5s infinite;
+        }
+
+        .animate-breathe-diamond {
+          animation: breatheDiamond 4s ease-in-out infinite;
+        }
+
+        .animate-lock-shimmer {
+          animation: lockShimmer 4s ease-in-out infinite;
+        }
+
+        .animate-active-pulse {
+          animation: activePulse 3s ease-in-out infinite;
+        }
+
+        .animate-soft-pulse {
+          animation: softPulse 4s ease-in-out infinite;
+        }
+
+        .animate-grid-pan {
+          animation: gridPan 60s linear infinite;
+        }
+
+        .animate-signal-flow {
+          animation: signalFlow 3s linear infinite;
+        }
+
+        .animate-signal-flow-reverse {
+          animation: signalFlow 4s linear infinite reverse;
+        }
+
+        .animate-node-activate {
+          animation: nodeActivate 8s ease-in-out infinite;
+        }
+
+        .animate-ray-shift {
+          animation: rayShift 12s ease-in-out infinite alternate;
         }
       `}</style>
 
-      <div className="yja-noise" />
-
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <SunMedium className="yja-spin-slow absolute top-[15%] left-[5%] h-20 w-20 text-[#FF6B4A] opacity-80" />
-        <Flower2 className="yja-float absolute top-[60%] right-[5%] h-28 w-28 rotate-12 text-[#C9E265] opacity-80" />
-        <Infinity className="yja-float-delayed absolute bottom-[20%] left-[15%] h-24 w-24 text-[#9D8BB5] opacity-60" />
+      <div className="pointer-events-none fixed inset-0 -z-20">
+        <EvilEye
+          eyeColor="#384fff"
+          intensity={1.5}
+          pupilSize={0.6}
+          irisWidth={0.25}
+          glowIntensity={0.35}
+          scale={0.8}
+          noiseScale={1}
+          pupilFollow={1}
+          flameSpeed={1}
+          backgroundColor="#060010"
+        />
       </div>
 
-      <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
-        <div className="yja-hard-shadow flex w-full max-w-2xl items-center justify-between gap-2 rounded-full bg-[#F2EFE9]/90 px-2 py-2 backdrop-blur-md">
-          <a
-            href="#"
-            className="group flex items-center gap-3 rounded-full bg-[#1A261D] px-4 py-2 text-[#F2EFE9] transition-colors hover:bg-[#FF6B4A]"
-          >
-            <span className="block font-serif text-xl font-bold italic transition-transform group-hover:rotate-12">
-              Y
-            </span>
-            <span className="text-sm font-bold tracking-tight">2026</span>
-          </a>
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.16),transparent_35%),radial-gradient(circle_at_20%_70%,rgba(34,211,238,0.08),transparent_28%),radial-gradient(circle_at_80%_30%,rgba(99,102,241,0.08),transparent_24%)]" />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]" />
+      </div>
 
-          <div className="hidden items-center gap-1 md:flex">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className={`rounded-full px-4 py-2 text-sm font-medium text-[#1A261D] transition-colors hover:text-[#1A261D] ${link.accent}`}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+      <header className="animate-enter sticky top-4 z-50 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur">
+            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/40 p-3">
+              <div className="flex items-center gap-3 pl-2">
+                <div className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
+                    H
+                  </div>
+                  <span>HubFit</span>
+                </div>
+              </div>
 
-          <button className="flex items-center gap-2 rounded-full border-2 border-[#1A261D] bg-[#C9E265] px-5 py-2.5 text-sm font-bold text-[#1A261D] shadow-[2px_2px_0px_0px_#1A261D] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-[#b5d145]">
-            Join List <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-      </nav>
+              <nav className="hidden items-center gap-8 text-sm font-medium text-slate-300 md:flex">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
 
-      <header className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-12">
-        <div className="pointer-events-none absolute top-1/2 left-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 select-none text-center opacity-5">
-          <span className="text-[20vw] leading-none font-black text-[#3D6B4F]">2026</span>
-        </div>
-
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center text-center">
-          <div className="yja-float mb-8">
-            <div className="inline-flex -rotate-2 items-center gap-4 rounded-full border-2 border-[#1A261D] bg-[#1A261D] py-1.5 pr-2 pl-6 text-sm font-bold tracking-wide text-[#F2EFE9] uppercase shadow-[4px_4px_0px_0px_#C9E265]">
-              July 2nd - 5th, 2026
-              <span className="rounded-full bg-[#FF6B4A] px-3 py-1 text-xs font-black text-[#1A261D]">
-                SAVE THE DATE
-              </span>
+              <div className="flex items-center gap-3">
+                <a
+                  href={isSignedIn ? "/dashboard" : "/sign-in"}
+                  className="hidden text-sm font-medium text-slate-300 transition-colors hover:text-white sm:block"
+                >
+                  {isSignedIn ? "Dashboard" : "Sign in"}
+                </a>
+                <a
+                  href={isSignedIn ? "/dashboard" : "/sign-up"}
+                  className="inline-flex items-center rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-neutral-900 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition hover:scale-105 hover:bg-slate-100"
+                >
+                  {isSignedIn ? "Open dashboard" : "Pre-order now"}
+                </a>
+              </div>
             </div>
-          </div>
-
-          <h1 className="group relative mb-4 cursor-default text-6xl leading-[0.9] font-black tracking-tighter text-[#1A261D] md:text-8xl lg:text-9xl">
-            YJA CONVENTION
-            <br />
-            <span className="relative inline-block font-serif italic text-[#3D6B4F]">
-              New Jersey
-              <MapPin className="absolute -top-6 -right-10 -z-10 h-14 w-14 rotate-12 text-[#FF6B4A] md:-right-12 md:h-16 md:w-16" />
-            </span>
-          </h1>
-
-          <div className="relative mt-8 mb-12">
-            <div className="absolute top-1/2 inset-x-0 -z-10 h-px bg-gradient-to-r from-transparent via-[#C9E265] to-transparent opacity-50" />
-            <div className="relative inline-block bg-[#F2EFE9] px-6">
-              <p className="text-xl font-medium tracking-tight md:text-3xl">
-                <span className="mr-2 font-serif italic text-[#1A261D]/60">theme:</span>
-                The Art of the{" "}
-                <span className="mx-1 inline-block -skew-x-12 rounded-sm border-2 border-[#1A261D] bg-[#9D8BB5] px-2 font-serif italic text-[#F2EFE9]">
-                  In-Between
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <div className="relative flex flex-col items-center justify-center gap-6 sm:flex-row">
-            <button className="yja-hard-shadow yja-hard-shadow-hover group flex items-center gap-3 rounded-full bg-[#1A261D] px-10 py-5 text-xl font-bold text-[#F2EFE9]">
-              Register Interest
-              <Sparkles className="h-6 w-6 text-[#C9E265] transition-transform duration-500 group-hover:rotate-180" />
-            </button>
-            <button className="yja-hard-shadow yja-hard-shadow-hover flex items-center gap-3 rounded-full bg-[#F2EFE9] px-10 py-5 text-xl font-bold text-[#1A261D]">
-              <CirclePlay className="h-6 w-6" />
-              2024 Recap
-            </button>
-          </div>
-        </div>
-
-        <div className="yja-float absolute bottom-20 left-10 hidden lg:block md:left-20">
-          <div className="yja-hard-shadow-sm w-48 rotate-[-6deg] rounded-lg bg-white p-2 pb-6">
-            <div className="relative mb-2 flex h-40 items-center justify-center overflow-hidden rounded bg-[#3D6B4F]">
-              <img
-                src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
-                alt="Convention crowd"
-                className="h-full w-full object-cover grayscale transition-all duration-500 hover:grayscale-0"
-              />
-            </div>
-            <div className="text-center font-serif text-sm font-bold italic">2024 Memories</div>
-          </div>
-        </div>
-
-        <div className="yja-float-delayed absolute top-40 right-10 hidden lg:block md:right-20">
-          <div className="yja-hard-shadow-sm z-20 w-40 rotate-[12deg] rounded-lg bg-white p-2 pb-6">
-            <div className="mb-2 flex h-28 items-center justify-center rounded bg-[#FF6B4A]">
-              <Music4 className="h-12 w-12 text-[#F2EFE9]" />
-            </div>
-            <div className="text-center font-serif text-sm font-bold italic">Socials</div>
           </div>
         </div>
       </header>
 
-      <div className="relative z-20 overflow-hidden border-y-4 border-[#1A261D] bg-[#3D6B4F] py-12 shadow-lg -rotate-1 scale-105">
-        <div className="absolute inset-0 opacity-20 mix-blend-overlay [background-image:url('https://grainy-gradients.vercel.app/noise.svg')]" />
-        <div className="yja-marquee flex whitespace-nowrap">
-          {[0, 1].map((track) => (
-            <span
-              key={track}
-              className="flex items-center gap-6 px-8 text-4xl font-black text-[#F2EFE9] uppercase md:text-5xl"
-            >
-              {marqueeItems.map((item, index) => (
-                <span key={`${track}-${item}`} className="flex items-center gap-6">
-                  {item}
-                  <Star
-                    className={`h-8 w-8 ${
-                      index % 3 === 0
-                        ? "text-[#C9E265]"
-                        : index % 3 === 1
-                          ? "text-[#FF6B4A]"
-                          : "text-[#9D8BB5]"
-                    }`}
-                  />
+      <section className="animate-enter-delay relative">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl pb-20 pt-16 sm:pb-28 sm:pt-24 lg:pb-0 lg:pt-32">
+            <div className="pointer-events-none relative z-10 select-none">
+              <span className="animate-float-cursor animate-float-chip absolute left-1/2 top-0 -translate-x-1/2 -translate-y-8 sm:left-[65%] sm:-top-12 sm:-translate-y-8">
+                <span className="block whitespace-nowrap rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-xs font-semibold text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
+                  #1 Coaching Platform
                 </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <section id="about" className="relative mx-auto max-w-7xl px-6 py-24 md:px-12">
-        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-          <div className="relative z-10 order-2 lg:order-1">
-            <div className="mb-6 inline-block rounded border-2 border-[#1A261D] bg-[#C9E265] px-3 py-1 font-bold text-[#1A261D] shadow-[2px_2px_0px_0px_#1A261D]">
-              THEME REVEAL
-            </div>
-            <h2 className="mb-8 text-5xl leading-[0.9] font-bold tracking-tighter text-[#1A261D] md:text-7xl">
-              Finding beauty in the <br />
-              <span className="bg-gradient-to-r from-[#FF6B4A] to-[#9D8BB5] bg-clip-text font-serif italic text-transparent">
-                Transition.
               </span>
-            </h2>
-            <div className="space-y-6 text-xl font-medium text-[#1A261D]/80">
-              <p>
-                <span className="font-bold text-[#1A261D]">The Art of the In-Between</span>{" "}
-                explores the spaces where we grow. Between tradition and modernity.
-                Between youth and adulthood. Between who we were and who we are
-                becoming.
-              </p>
-              <p>
-                New Jersey, the Garden State, sits between major cities and quiet
-                nature. It is the perfect backdrop to explore our duality.
-              </p>
             </div>
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              {pillars.map((pillar) => (
-                <div
-                  key={pillar.label}
-                  className="flex items-center gap-2 rounded-lg border-2 border-[#1A261D] bg-[#F2EFE9] px-4 py-2 text-sm font-bold"
+            <div className="relative z-10 text-center">
+              <h1 className="mx-auto max-w-5xl text-5xl font-semibold tracking-tight text-white sm:text-6xl md:text-7xl">
+                The Future Of{" "}
+                <span className="relative mt-2 inline-block">
+                  <span className="absolute -inset-1 rounded-lg bg-blue-500/20 blur-2xl" />
+                  <span className="relative bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+                    Coaching Is Here
+                  </span>
+                </span>
+              </h1>
+
+              <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-slate-400">
+                HubFit makes it easy to build, scale, and automate your fitness
+                business without feeling slow or clunky.
+              </p>
+
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <a
+                  href="#pricing"
+                  className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white px-6 py-3 text-base font-semibold text-black transition hover:scale-105 hover:bg-slate-200"
                 >
-                  <div className={`h-3 w-3 rounded-full ${pillar.color}`} />
-                  {pillar.label}
-                </div>
-              ))}
+                  Get Lifetime Access
+                </a>
+              </div>
             </div>
-          </div>
 
-          <div className="relative order-1 h-[500px] w-full lg:order-2">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="yja-float absolute top-0 left-10 z-10 h-80 w-64 rounded-full border-4 border-[#F2EFE9] bg-[#1A261D] opacity-90 mix-blend-multiply" />
-              <div className="yja-float-delayed absolute right-10 bottom-0 z-10 h-80 w-64 rounded-full border-4 border-[#F2EFE9] bg-[#FF6B4A] opacity-90 mix-blend-multiply" />
+            <div className="relative mt-16 mb-16 flex h-[280px] w-full justify-center overflow-hidden px-4 pr-4 md:mb-24 md:mt-20 md:block md:h-auto md:overflow-visible md:px-0">
+              <div className="relative mx-auto w-[850px] max-w-6xl scale-[0.4] overflow-hidden rounded-xl border border-white/10 bg-black/40 shadow-2xl backdrop-blur-xl sm:scale-50 md:w-full md:scale-100 md:transform-none">
+                <div className="absolute inset-0 pointer-events-none z-0">
+                  <div className="absolute -right-20 top-1/4 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[100px]" />
+                  <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent_30%,rgba(255,255,255,0.03)_40%,rgba(255,255,255,0.05)_50%,rgba(255,255,255,0.03)_60%,transparent_70%)]" />
+                </div>
 
-              <div className="z-20 rotate-3 rounded-2xl border-2 border-[#1A261D] bg-[#F2EFE9]/80 p-6 text-center shadow-xl backdrop-blur-sm">
-                <Infinity className="mx-auto mb-2 h-12 w-12 text-[#3D6B4F]" />
-                <p className="font-serif text-xl font-bold italic">Where paths meet</p>
+                <div className="relative z-20 flex h-10 items-center border-b border-white/5 bg-white/5 px-4">
+                  <div className="flex gap-2">
+                    <div className="h-3 w-3 rounded-full border border-red-500/50 bg-red-500/20" />
+                    <div className="h-3 w-3 rounded-full border border-yellow-500/50 bg-yellow-500/20" />
+                    <div className="h-3 w-3 rounded-full border border-green-500/50 bg-green-500/20" />
+                  </div>
+                </div>
+
+                <div className="relative z-10 grid min-h-[600px] grid-cols-12 text-slate-400">
+                  <div className="col-span-3 flex flex-col border-r border-white/10 p-4">
+                    <div className="mb-6 flex items-center justify-between">
+                      <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white">
+                        <Briefcase className="h-3.5 w-3.5" />
+                        Operations
+                      </div>
+                      <button className="rounded p-1 text-slate-500 transition hover:bg-white/10">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="mb-6 flex gap-1 rounded-lg bg-white/5 p-1">
+                      <button className="flex-1 rounded-md bg-white px-2 py-1 text-[10px] font-semibold text-black shadow-sm">
+                        Business
+                      </button>
+                      <button className="flex-1 rounded-md px-2 py-1 text-[10px] font-medium text-slate-400 hover:text-white">
+                        Finance
+                      </button>
+                      <button className="flex-1 rounded-md px-2 py-1 text-[10px] font-medium text-slate-400 hover:text-white">
+                        HR
+                      </button>
+                    </div>
+
+                    <div className="flex-1 space-y-1">
+                      <div className="mb-2 pl-2 text-[10px] font-medium uppercase tracking-wider text-slate-600">
+                        Active Workflows
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2.5 text-xs text-white">
+                        <div className="flex items-center gap-2">
+                          <PieChart className="h-3.5 w-3.5 text-slate-400" />
+                          <span>Q3 Revenue Forecast</span>
+                        </div>
+                        <span className="text-[10px] text-green-400">Live</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto rounded-xl border border-white/5 bg-black/20 p-4">
+                      <div className="mb-3 flex items-center gap-2 text-xs font-medium text-white">
+                        <TrendingUp className="h-3.5 w-3.5" />
+                        Business Health
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between text-[10px]">
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <div className="h-2 w-3 rounded-sm bg-white" />
+                            Margin
+                          </div>
+                          <span className="text-white">24.5%</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[10px]">
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <div className="h-2 w-3 rounded-sm bg-slate-600" />
+                            Growth
+                          </div>
+                          <span className="text-green-400">+12%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-6 flex flex-col border-r border-white/10">
+                    <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="font-medium text-white">
+                          quarterly_revenue.model
+                        </span>
+                        <span className="text-slate-600">•</span>
+                        <span className="text-slate-500">Finance Team</span>
+                      </div>
+                    </div>
+                    <div className="flex-1 p-6">
+                      <div className="relative mb-6 overflow-hidden rounded-xl border border-white/10 bg-black/50 p-4">
+                        <div className="mb-4 flex items-center justify-between">
+                          <span className="text-xs font-medium text-white">
+                            Business Logic
+                          </span>
+                          <span className={`${mono.className} text-[10px] text-slate-600`}>
+                            Python
+                          </span>
+                        </div>
+                        <div className={`${mono.className} h-32 overflow-hidden text-xs leading-relaxed text-slate-300`}>
+                          <span className="text-purple-400">import</span> seaint.business{" "}
+                          <span className="text-purple-400">as</span> biz <br />
+                          <span className="text-purple-400">def</span>{" "}
+                          <span className="text-blue-400">forecast_q3</span>
+                          (current_mrr, growth_rate):<br />
+                          &nbsp;&nbsp;projection = biz.models.linear(current_mrr,
+                          growth_rate)
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative col-span-3 flex flex-col overflow-hidden p-4">
+                    <div className="absolute -right-20 top-0 h-64 w-64 rounded-full bg-blue-500/10 blur-[60px]" />
+                    <div className="relative z-10">
+                      <div className="mb-6 flex items-center gap-2">
+                        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white">
+                          <SlidersHorizontal className="h-3.5 w-3.5" />
+                          Parameters
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        {[
+                          ["Retention", "92%"],
+                          ["Client Load", "148"],
+                          ["Tasks Done", "34"],
+                        ].map(([label, value]) => (
+                          <div
+                            key={label}
+                            className="rounded-xl border border-white/10 bg-white/5 p-4"
+                          >
+                            <div className="text-[10px] uppercase tracking-[0.25em] text-slate-500">
+                              {label}
+                            </div>
+                            <div className="mt-2 text-2xl font-semibold text-white">
+                              {value}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -493,108 +1040,101 @@ export default function HomePage() {
       </section>
 
       <section
-        id="memories"
-        className="relative overflow-hidden border-t-4 border-[#F2EFE9] bg-[#1A261D] py-20"
+        id="features"
+        className="mx-auto mt-24 mb-24 max-w-7xl rounded-3xl bg-gradient-to-br from-white/10 via-white/0 to-white/10 p-6 sm:p-10"
       >
-        <div className="mx-auto mb-12 flex max-w-7xl items-end justify-between px-6 md:px-12">
-          <div>
-            <h2 className="text-4xl font-black text-[#F2EFE9] md:text-5xl">The Archive</h2>
-            <p className="mt-2 font-serif text-xl italic text-[#C9E265]">
-              Moments from past conventions
-            </p>
-          </div>
-          <div className="hidden gap-2 md:flex">
-            <button className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#F2EFE9] text-[#F2EFE9] transition-colors hover:border-[#C9E265] hover:bg-[#C9E265] hover:text-[#1A261D]">
-              <ArrowLeft className="h-6 w-6" />
-            </button>
-            <button className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#F2EFE9] text-[#F2EFE9] transition-colors hover:border-[#C9E265] hover:bg-[#C9E265] hover:text-[#1A261D]">
-              <ArrowRight className="h-6 w-6" />
-            </button>
-          </div>
-        </div>
+        <div className="flex flex-col gap-10">
+          <SectionLabel index="01" title="Core Platform" />
 
-        <div className="yja-scrollbar-none flex snap-x gap-8 overflow-x-auto px-6 pb-12 md:px-12">
-          {archiveCards.map((card, index) => (
-            <div
-              key={`${card.kind}-${index}`}
-              className={`group relative flex-shrink-0 snap-center ${card.topOffset ?? ""}`}
-            >
-              <div
-                className={`yja-hard-shadow ${card.width} ${card.height} ${card.rotation} rounded-lg bg-[#F2EFE9] p-3 pb-12 transition-transform duration-300 group-hover:rotate-0`}
+          <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+            <div className="flex max-w-3xl flex-col gap-6">
+              <h2
+                className={`${oswald.className} text-4xl font-light leading-[1.05] text-white md:text-5xl lg:text-6xl`}
               >
-                <div
-                  className={`relative h-full w-full overflow-hidden rounded border border-[#1A261D] ${card.tone}`}
-                >
-                  <img
-                    src={card.image}
-                    alt={card.title ?? "Convention memory"}
-                    className={`h-full w-full object-cover transition-all duration-700 ${
-                      card.kind === "video"
-                        ? "opacity-60 group-hover:scale-110"
-                        : "grayscale group-hover:scale-105 group-hover:grayscale-0"
-                    }`}
-                  />
-
-                  {card.kind === "video" ? (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-[#F2EFE9] bg-[#F2EFE9]/20 backdrop-blur-md transition-transform group-hover:scale-110">
-                        <CirclePlay className="ml-1 h-8 w-8 text-[#F2EFE9]" />
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-
-                {card.title ? (
-                  <div className="absolute bottom-3 left-4 font-serif font-bold italic text-[#1A261D]">
-                    {card.title}
-                  </div>
-                ) : null}
-
-                {!card.title && index === 1 ? (
-                  <div className="absolute right-4 bottom-4 text-[#FF6B4A]">
-                    <Star className="h-8 w-8 fill-current" />
-                  </div>
-                ) : null}
-
-                {!card.title && index === 4 ? (
-                  <div className="absolute top-[-10px] left-[40%] h-12 w-8 rotate-3 bg-[#C9E265]/80 shadow-sm backdrop-blur" />
-                ) : null}
-              </div>
+                Focus on Coaching.
+                <span className="block text-slate-500">Results you can see.</span>
+              </h2>
+              <p className="max-w-xl text-lg font-light leading-relaxed text-slate-400">
+                A complete operating system for your fitness business. Manage
+                clients, chats, tasks, and AI in one place.
+              </p>
             </div>
-          ))}
+
+            <button className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/5">
+              View Platform
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {featureCards.map((card) => (
+              <article
+                key={card.title}
+                className={`${card.span} group flex flex-col justify-between overflow-hidden rounded-[2rem] border border-white/10 bg-black px-8 py-8 transition duration-500 hover:border-blue-500/30`}
+              >
+                <FeatureVisual visual={card.visual} />
+                <div>
+                  <h3
+                    className={`${oswald.className} text-4xl font-light text-white`}
+                  >
+                    {card.title}
+                  </h3>
+                  <p className="mt-2 text-lg font-light leading-relaxed text-slate-400">
+                    {card.description}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-t-4 border-[#1A261D] bg-[#F2EFE9] py-24 text-[#1A261D]">
-        <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border-2 border-[#1A261D] bg-[#F2EFE9] px-4 py-2 text-sm font-bold text-[#1A261D] shadow-[4px_4px_0px_0px_#1A261D]">
-            <Bolt className="h-4 w-4 text-[#FF6B4A]" />
-            LOCATION
+      <section
+        id="management"
+        className="group/section relative z-10 mx-auto mt-24 mb-24 max-w-7xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-white/5 via-transparent to-white/5 p-10"
+      >
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="animate-ray-shift absolute -left-1/2 -top-1/2 h-[200%] w-[200%] opacity-40 [background:repeating-linear-gradient(60deg,rgba(30,58,138,0)_0%,rgba(30,58,138,0)_45%,rgba(59,130,246,0.15)_48%,rgba(59,130,246,0.3)_50%,rgba(59,130,246,0.15)_52%,rgba(30,58,138,0)_55%)]" />
+          <div className="absolute -top-40 right-0 h-[800px] w-[800px] rounded-full bg-blue-500/20 blur-[120px]" />
+        </div>
+
+        <div className="relative z-10 flex flex-col gap-10">
+          <SectionLabel index="02" title="Management" />
+
+          <div className="max-w-3xl">
+            <h2
+              className={`${oswald.className} mb-6 text-4xl font-light text-white md:text-5xl lg:text-6xl`}
+            >
+              Total Control.
+              <span className="text-slate-500"> Zero Friction.</span>
+            </h2>
+            <p className="max-w-xl text-lg font-light leading-relaxed text-slate-400">
+              Streamline operations with powerful tools for team management,
+              client intake, and financial tracking.
+            </p>
           </div>
 
-          <h2 className="mb-8 text-5xl font-black tracking-tight md:text-7xl">
-            The Garden <br />
-            <span className="yja-text-stroke font-serif italic text-[#C9E265]">
-              State of Mind
-            </span>
-          </h2>
-          <p className="mx-auto mb-12 max-w-3xl text-xl font-medium text-[#1A261D]/70 md:text-2xl">
-            Home to one of the largest Jain populations outside India. A perfect
-            ecosystem for growth, spirituality, and community.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-6">
-            {locationFeatures.map((feature) => {
-              const Icon = feature.icon
-
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {managementCards.map((card) => {
+              const Icon = card.icon
               return (
-                <div
-                  key={feature.label}
-                  className="flex items-center gap-3 rounded-xl border-2 border-[#1A261D] bg-white px-6 py-4 font-bold text-[#1A261D] shadow-[4px_4px_0px_0px_#1A261D] transition-all hover:-translate-y-[2px] hover:shadow-[6px_6px_0px_0px_#1A261D]"
+                <article
+                  key={card.title}
+                  className="group relative z-10 overflow-hidden rounded-2xl border border-white/10 bg-black p-8 shadow-lg transition duration-500 hover:-translate-y-1 hover:border-blue-500/30"
                 >
-                  <Icon className={`h-5 w-5 ${feature.color}`} />
-                  {feature.label}
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/0 to-blue-500/5 opacity-0 transition duration-500 group-hover:opacity-100" />
+                  <div
+                    className={`relative mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 ${card.iconClassName}`}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="relative mb-3 text-xl font-semibold tracking-tight text-white">
+                    {card.title}
+                  </h3>
+                  <p className="relative text-sm leading-relaxed text-slate-400 transition group-hover:text-slate-300">
+                    {card.description}
+                  </p>
+                </article>
               )
             })}
           </div>
@@ -602,149 +1142,231 @@ export default function HomePage() {
       </section>
 
       <section
-        id="schedule"
-        className="border-t-4 border-[#1A261D] bg-[linear-gradient(180deg,#F2EFE9_0%,#E9E2D5_100%)] px-6 py-24"
+        id="automations"
+        className="group/section relative z-10 mx-auto mt-24 mb-24 max-w-7xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-transparent p-10"
       >
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <div className="mb-5 inline-flex rounded border-2 border-[#1A261D] bg-[#FF6B4A] px-3 py-1 font-bold text-[#1A261D] shadow-[2px_2px_0px_0px_#1A261D]">
-                WEEKEND FLOW
-              </div>
-              <h2 className="text-5xl font-black tracking-tighter text-[#1A261D] md:text-7xl">
-                Four days of motion,
-                <br />
-                meaning, and memory.
-              </h2>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/10 via-transparent to-transparent opacity-50" />
+          <div className="absolute left-[10%] top-[-20%] h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[120px]" />
+          <div className="animate-ray-shift absolute -left-[50%] -top-[50%] h-[200%] w-[200%] opacity-20 [background:repeating-linear-gradient(135deg,transparent_0%,transparent_45%,rgba(6,182,212,0.1)_48%,rgba(6,182,212,0.2)_50%,rgba(6,182,212,0.1)_52%,transparent_55%)]" />
+        </div>
+
+        <div className="relative z-10 flex flex-col gap-10">
+          <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-8">
+            <span className={`${mono.className} text-xs tracking-[0.35em] text-cyan-400`}>
+              03
+            </span>
+            <span className="text-xs uppercase tracking-[0.35em] text-slate-500">
+              Automations
+            </span>
+          </div>
+
+          <div className="max-w-3xl">
+            <h2
+              className={`${oswald.className} mb-6 text-4xl font-light text-white md:text-5xl lg:text-6xl`}
+            >
+              Automations
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {automationCards.map((card) => {
+              const Icon = card.icon
+              return (
+                <article
+                  key={card.title}
+                  className="group relative z-10 overflow-hidden rounded-2xl border border-white/5 bg-[#050505] p-8 shadow-lg transition duration-500 hover:-translate-y-1"
+                >
+                  <div
+                    className={`relative mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-pink-500/20 bg-pink-500/10 ${card.iconClassName}`}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="relative mb-3 text-xl font-semibold tracking-tight text-white">
+                    {card.title}
+                  </h3>
+                  <p className="relative text-sm leading-relaxed text-slate-400 transition group-hover:text-slate-300">
+                    {card.description}
+                  </p>
+                </article>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="content"
+        className="relative z-10 mx-auto mt-24 max-w-7xl px-4 sm:mt-32 sm:px-6 lg:px-8"
+      >
+        <div className="relative overflow-visible">
+          <div className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute left-1/2 top-0 h-[32rem] w-[36rem] -translate-x-1/2 rounded-full bg-blue-500/10 opacity-20 blur-[140px]" />
+            <div className="absolute -left-20 bottom-0 h-[20rem] w-[28rem] rounded-full bg-cyan-500/20 opacity-30 blur-[140px]" />
+            <div className="absolute -right-24 top-1/3 h-[22rem] w-[22rem] rounded-full bg-indigo-500/20 opacity-20 blur-[120px]" />
+          </div>
+
+          <div className="mb-8 text-center sm:mb-12">
+            <div className="mx-auto inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-cyan-400 shadow-sm backdrop-blur transition hover:border-white/20 hover:bg-white/10">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Complete Content Engine
             </div>
-            <p className="max-w-xl text-lg font-medium text-[#1A261D]/70">
-              This is the early shape of the weekend. Expect thoughtful sessions,
-              joyful gatherings, and plenty of space for the in-between moments.
+            <h2 className="mt-4 px-4 text-2xl font-semibold tracking-tight text-white/90 sm:text-3xl lg:text-4xl">
+              Centralize your entire
+            </h2>
+            <h3 className="mt-1 px-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
+              coaching knowledge base
+            </h3>
+            <p className="mx-auto mt-3 max-w-2xl px-4 text-xs text-white/60 sm:text-sm lg:text-base">
+              From workout templates to meal plans, HubFit gives your coaching
+              process a reusable system behind the scenes.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {schedule.map((item) => (
+          <div className="grid auto-rows-[140px] grid-cols-1 gap-3 sm:auto-rows-[180px] sm:grid-cols-2 sm:gap-4 lg:grid-cols-12">
+            {libraryCards.map((card) => (
               <article
-                key={item.day}
-                className="yja-hard-shadow rounded-[28px] bg-white p-6 transition-transform duration-300 hover:-translate-y-1"
+                key={card.title}
+                className={`${card.span} rounded-xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-4 ring-1 ring-white/10 backdrop-blur transition duration-300 hover:border-white/20 hover:from-white/[0.12] sm:rounded-2xl sm:p-5`}
               >
-                <div
-                  className={`mb-5 inline-flex rounded-full border-2 border-[#1A261D] px-3 py-1 text-xs font-black tracking-[0.18em] text-[#1A261D] uppercase ${item.accent}`}
-                >
-                  {item.day}
+                <div className="flex h-full flex-col">
+                  <div className="inline-flex w-fit items-center rounded-md border border-white/20 bg-white/10 px-2 py-1 text-[10px] font-medium text-white/80">
+                    {card.eyebrow}
+                  </div>
+                  <h3 className="mt-2 text-sm font-semibold tracking-tight text-white/90 sm:text-base">
+                    {card.title}
+                  </h3>
+                  <p className="mt-1 text-[10px] text-white/70 sm:text-xs">
+                    {card.description}
+                  </p>
+                  {card.content}
                 </div>
-                <h3 className="mb-3 text-2xl font-black tracking-tight text-[#1A261D]">
-                  {item.title}
-                </h3>
-                <p className="text-base leading-relaxed font-medium text-[#1A261D]/70">
-                  {item.description}
-                </p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-t-4 border-[#1A261D] bg-[#3D6B4F] px-6 py-32">
-        <Settings className="yja-spin-slow absolute top-10 left-10 h-24 w-24 text-[#C9E265] opacity-20" />
-        <Sparkles className="yja-float absolute right-10 bottom-10 h-28 w-28 text-[#FF6B4A] opacity-20" />
-
-        <div className="yja-hard-shadow relative z-10 mx-auto max-w-4xl rounded-3xl border-4 border-[#1A261D] bg-[#F2EFE9] p-8 text-center shadow-[12px_12px_0px_0px_#1A261D] md:p-16">
-          <div className="mb-6 flex justify-center">
-            <div className="yja-float flex h-20 w-20 items-center justify-center rounded-full border-2 border-[#1A261D] bg-[#C9E265] text-[#1A261D]">
-              <Mail className="h-10 w-10" />
-            </div>
-          </div>
-
-          <h2 className="mb-6 text-5xl font-black tracking-tighter text-[#1A261D] md:text-7xl">
-            Be part of <br />
-            <span className="font-serif italic text-[#FF6B4A]">history.</span>
-          </h2>
-          <p className="mb-10 text-xl font-medium text-[#1A261D]/70">
-            Sign up for early access tickets and exclusive updates for YJA 2026.
-          </p>
-
-          <form className="relative mx-auto flex max-w-lg flex-col gap-4 md:flex-row">
-            <input
-              type="email"
-              placeholder="enter@email.com"
-              className="flex-1 rounded-xl border-2 border-[#1A261D] bg-white px-6 py-4 font-bold text-[#1A261D] outline-none transition-all placeholder:text-[#1A261D]/40 focus:ring-4 focus:ring-[#C9E265]/50"
-            />
-            <button
-              type="button"
-              className="rounded-xl bg-[#1A261D] px-8 py-4 font-bold text-[#F2EFE9] shadow-[4px_4px_0px_0px_#9D8BB5] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#FF6B4A] hover:shadow-[2px_2px_0px_0px_#9D8BB5] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-            >
-              Join Waitlist
-            </button>
-          </form>
-          <p className="mt-6 text-sm font-bold tracking-wider text-[#1A261D]/40 uppercase">
-            No spam. Only epic updates.
-          </p>
-        </div>
-      </section>
-
-      <footer className="bg-[#1A261D] px-6 pt-20 pb-10 text-[#F2EFE9]">
-        <div className="mx-auto mb-16 grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <a
-              href="#"
-              className="group mb-6 flex w-fit items-center gap-2 text-3xl font-black tracking-tighter text-[#F2EFE9]"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[#F2EFE9] bg-[#C9E265] font-serif text-xl italic text-[#1A261D] transition-transform group-hover:rotate-12">
-                Y
-              </span>
-              YJA 2026
-            </a>
-            <p className="max-w-sm text-lg leading-relaxed font-medium text-[#9D8BB5]">
-              Young Jain Professionals of America.
-              <br />
-              Connecting souls, building futures.
+      <section
+        id="pricing"
+        className="relative z-10 mt-24 border-t border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 flex flex-col items-center justify-center text-center">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs font-medium text-yellow-400">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-500" />
+              Presale Offer
+            </span>
+            <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              Unlock Lifetime Access
+            </h2>
+            <p className="mt-4 max-w-lg text-slate-400">
+              Join the presale and secure the future of your coaching business.
+              Pay once and use HubFit forever.
             </p>
           </div>
 
-          <div>
-            <h4 className="mb-6 w-fit border-b-2 border-[#FF6B4A]/30 pb-2 text-sm font-bold tracking-wider text-[#FF6B4A] uppercase">
-              Navigation
-            </h4>
-            <ul className="space-y-4 font-medium text-[#F2EFE9]/70">
-              {footerLinks.map((link) => (
-                <li key={link}>
-                  <a href="#" className="flex items-center gap-2 transition-colors hover:text-[#C9E265]">
-                    <ArrowRight className="h-4 w-4" />
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="relative mx-auto flex max-w-3xl flex-col items-center overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0A] p-8 shadow-2xl md:p-12">
+            <div className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 bg-blue-500/20 blur-[100px]" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent" />
 
-          <div>
-            <h4 className="mb-6 w-fit border-b-2 border-[#FF6B4A]/30 pb-2 text-sm font-bold tracking-wider text-[#FF6B4A] uppercase">
-              Socials
-            </h4>
-            <div className="flex gap-4">
-              <a
-                href="#"
-                className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-[#F2EFE9]/20 bg-[#F2EFE9]/10 transition-all hover:-translate-y-1 hover:border-[#C9E265] hover:bg-[#C9E265] hover:text-[#1A261D]"
-              >
-                <Camera className="h-6 w-6" />
-              </a>
-              <a
-                href="#"
-                className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-[#F2EFE9]/20 bg-[#F2EFE9]/10 transition-all hover:-translate-y-1 hover:border-[#C9E265] hover:bg-[#C9E265] hover:text-[#1A261D]"
-              >
-                <Send className="h-5 w-5" />
-              </a>
+            <div className="relative z-10 w-full text-center">
+              <div className="mb-2 text-lg font-medium text-blue-400">
+                All-Access Bundle
+              </div>
+              <h3 className="mb-6 text-3xl font-bold text-white">
+                Lifetime Membership
+              </h3>
+
+              <div className="mb-8 flex items-center justify-center gap-2">
+                <span className="text-6xl font-bold tracking-tight text-white">
+                  $997
+                </span>
+                <span className="mb-2 self-end text-sm font-medium text-slate-500">
+                  one-time payment
+                </span>
+              </div>
+
+              <p className="mx-auto mb-10 max-w-md text-slate-400">
+                Get unlimited access to every feature we build, forever. No
+                monthly subscriptions and no hidden fees.
+              </p>
+
+              <button className="w-full max-w-md rounded-xl bg-white px-8 py-4 text-base font-bold text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] transition hover:scale-[1.02] hover:bg-slate-200">
+                Get Lifetime Access
+              </button>
+              <div className="mt-4 text-xs text-slate-500">
+                Limited spots available for presale
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-12 w-full border-t border-white/10 pt-10">
+              <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-4 text-sm text-slate-300 md:grid-cols-2">
+                {pricingFeatures.map((feature) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-blue-400" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 border-t border-[#F2EFE9]/10 pt-8 text-center text-sm font-medium text-[#9D8BB5] md:flex-row md:text-left">
-          <p>© 2026 Young Jain Professionals.</p>
-          <p className="flex items-center justify-center gap-2 md:justify-end">
-            Designed with <Heart className="h-4 w-4 fill-[#FF6B4A] text-[#FF6B4A]" /> in NJ.
-          </p>
+      <section className="relative z-10 mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
+        <h2 className="mb-12 text-center text-3xl font-semibold text-white">
+          Frequently asked questions
+        </h2>
+        <div className="space-y-4">
+          {faqs.map((faq) => (
+            <details
+              key={faq.question}
+              className="group rounded-xl border border-white/10 bg-[#0A0A0A] p-4"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between font-medium text-slate-200 group-hover:text-white">
+                {faq.question}
+                <span className="text-slate-500 transition group-open:rotate-45">+</span>
+              </summary>
+              <div className="mt-4 text-sm leading-relaxed text-slate-400">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <footer className="relative z-10 mx-auto max-w-7xl border-t border-white/10 px-4 pb-16 pt-10 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 pt-16 md:grid-cols-4 lg:grid-cols-5">
+          <div className="col-span-2 lg:col-span-1">
+            <div className="mb-6 flex items-center gap-2 text-xl font-bold text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
+                H
+              </div>
+              <span>HubFit</span>
+            </div>
+            <p className="mb-6 text-xs text-slate-500">
+              © 2025 HubFit. All rights reserved.
+            </p>
+          </div>
+
+          {footerColumns.map((column) => (
+            <div key={column.title}>
+              <h3 className="text-sm font-semibold text-white">{column.title}</h3>
+              <ul className="mt-4 space-y-4">
+                {column.links.map((link) => (
+                  <li key={link}>
+                    <a
+                      href="#"
+                      className="text-sm text-slate-400 transition-colors hover:text-white"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </footer>
     </main>
