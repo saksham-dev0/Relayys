@@ -48,6 +48,12 @@ export default function IntegrationsPage() {
   const isConnected = connection?.status === "connected";
   const isPending = connection?.status === "pending";
 
+  const resolvedDeepLink =
+    deepLink ??
+    (isPending && connection?.connectToken
+      ? `https://t.me/${botUsername}?start=${connection.connectToken}`
+      : null);
+
   return (
     <div className="flex min-h-screen flex-col bg-muted">
       <div className="flex flex-1 flex-col p-8">
@@ -104,18 +110,18 @@ export default function IntegrationsPage() {
                     Disconnect
                   </Button>
                 </>
-              ) : deepLink || isPending ? (
+              ) : resolvedDeepLink ? (
                 <div className="space-y-3">
                   <p className="text-muted-foreground text-sm">
                     Tap the link below in Telegram to connect:
                   </p>
                   <a
-                    href={deepLink ?? "#"}
+                    href={resolvedDeepLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block rounded-md bg-muted px-4 py-2 font-mono text-sm break-all hover:underline"
                   >
-                    {deepLink}
+                    {resolvedDeepLink}
                   </a>
                   <p className="text-muted-foreground text-xs">
                     Waiting for connection… This page will update automatically.

@@ -5,19 +5,53 @@ import { getChatReply } from "@/lib/gemini";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-async function sendTelegramMessage(chatId: string, text: string) {
-  const token = process.env.TELEGRAM_BOT_TOKEN!;
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text }),
-  });
+async function sendTelegramMessage(chatId: string, text: string): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) throw new Error("TELEGRAM_BOT_TOKEN is not set");
+
+  const url = `https://api.telegram.org/bot${token}/sendMessage`;
+  const body = JSON.stringify({ chat_id: chatId, text });
+
+  const MAX_RETRIES = 3;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (res.status === 429) {
+      const retryAfter = Number(res.headers.get("Retry-After") ?? "2");
+      if (attempt < MAX_RETRIES - 1) {
+        await new Promise((r) => setTimeout(r, retryAfter * 1000));
+        continue;
+      }
+    }
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(
+        `Telegram sendMessage failed: ${res.status} ${(data as { description?: string }).description ?? res.statusText}`
+      );
+    }
+
+    return;
+  }
 }
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-telegram-bot-api-secret-token");
   if (secret !== process.env.TELEGRAM_WEBHOOK_SECRET) {
-    console.error("[webhook] bad secret:", secret);
+    console.error("[webhook] bad secret supplied, header present:", secret !== null);
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

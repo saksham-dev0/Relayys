@@ -26,13 +26,15 @@ export const createConnectToken = mutation({
       user = (await ctx.db.get(id))!;
     }
 
-    // Remove any existing pending connection
-    const existing = await ctx.db
+    // Remove only non-connected (pending/stale) rows; leave active integrations intact
+    const existingAll = await ctx.db
       .query("telegram_connections")
       .withIndex("by_user_id", (q) => q.eq("userId", user._id))
-      .unique();
-    if (existing) {
-      await ctx.db.delete(existing._id);
+      .collect();
+    for (const row of existingAll) {
+      if (row.status !== "connected") {
+        await ctx.db.delete(row._id);
+      }
     }
 
     const token = crypto.randomUUID();
@@ -62,7 +64,7 @@ export const getConnection = query({
     return ctx.db
       .query("telegram_connections")
       .withIndex("by_user_id", (q) => q.eq("userId", user._id))
-      .unique();
+      .first();
   },
 });
 
@@ -79,12 +81,12 @@ export const disconnect = mutation({
       .unique();
     if (!user) return;
 
-    const connection = await ctx.db
+    const connections = await ctx.db
       .query("telegram_connections")
       .withIndex("by_user_id", (q) => q.eq("userId", user._id))
-      .unique();
+      .collect();
 
-    if (connection) {
+    for (const connection of connections) {
       if (connection.telegramUserId) {
         const messages = await ctx.db
           .query("telegram_messages")
@@ -116,6 +118,17 @@ export const linkTelegramUser = mutation({
 
     if (!connection || connection.status !== "pending") {
       return { success: false, reason: "invalid_token" };
+    }
+
+    const existingMapping = await ctx.db
+      .query("telegram_connections")
+      .withIndex("by_telegram_user_id", (q) =>
+        q.eq("telegramUserId", args.telegramUserId)
+      )
+      .first();
+
+    if (existingMapping && existingMapping._id !== connection._id) {
+      return { success: false, reason: "telegram_id_in_use" };
     }
 
     await ctx.db.patch(connection._id, {
